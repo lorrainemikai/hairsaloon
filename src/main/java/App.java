@@ -6,6 +6,7 @@ import static spark.Spark;
 
 public class App{
     public static void main(String[] args) {
+        staticFileLocation("/public");
         get("/", (request,response)->{
             Map<String,Object> model = new HashMap<String,Object>();
             model.put("template", "templates/index.vtl");
@@ -48,6 +49,18 @@ public class App{
         model.put("template", "templates/clientform.vtl");
         return new ModelAndView(model, layout);
     },  new VelocityTemplateEngine());
+
+    post("/clients", (request,response)->{
+        Map<String, Object> model = new HashMap<String, Object>();
+        String name = request.queryParams("name");
+        String gender = request.queryParams("gender");
+        String contact = request.queryParams("contact");
+        int stylist_id = Integer.parseInt(request.queryParams("stylist_id"));
+        Client newClient = new Client(name, gender, contact, stylist_id);
+        newClient.save();
+        model.put("template", "templates/success.vtl");
+        return new ModelAndView (model,layout);
+    }, new VelocityTemplateEngine());
 
     }
 }
