@@ -75,7 +75,90 @@ public class App{
         model.put("template", "templates/clientform.vtl");
         return new ModelAndView(model, layout);
       }, new VelocityTemplateEngine());
-     
+     get ("/stylists/:id/edit",(request, response)-> {
+         Map <String,Object> model =new HashMap<String,Object>();
+         Stylist stylist = Stylist.find(Integer.parseInt(request.params(":id")));
+         String checkMale="";
+         String checkFemale="";
+         if(stylist.getGender().equals("M")){
+           checkMale="checked=\"checked\"";
+         }else{
+           checkFemale="checked=\"checked\"";
+         }
+         model.put("checkMale", checkMale);
+         model.put("checkFemale", checkFemale);
+         model.put("stylist", stylist);
+         model.put("template"<String,Object>, "templates/stylistform.vtl");
+         return new ModelAndView(model, layout);
+       }, new VelocityTemplateEngine());
+           //UPDATING stylist Details
+      post("/stylists/:id/edit", (request, response) -> {
+        Map<String, Object> model = new HashMap<String, Object>();
+        Stylist stylist = Stylist.find(Integer.parseInt(request.params(":id")));
+        String name = request.queryParams("name");
+        String gender = request.queryParams("gender");
+        String contact = request.queryParams("contact");
+        stylist.update(name.toUpperCase(), gender, contact);
+        model.put("template", "templates/success.vtl");
+        return new ModelAndView(model, layout);
+        }, new VelocityTemplateEngine());
+
+        //removing stylists 
+        post("/stylists/:id/delete", (request, response) -> {
+          Map<String, Object> model = new HashMap<String, Object>();
+          Stylist stylist = Stylist.find(Integer.parseInt(request.params(":id")));
+          stylist.delete();
+          response.redirect("/stylists");
+          return new ModelAndView(model, layout);
+          }, new VelocityTemplateEngine());
+
+          get("/clients/:id/edit", (request, response) -> {
+            Map<String, Object> model = new HashMap<String, Object>();
+            Client client = Client.find(Integer.parseInt(request.params(":id")));
+            String checkMale="";
+            String checkFemale="";
+            if(client.getGender().equals("M")){
+              checkMale="checked=\"checked\"";
+            }else{
+              checkFemale="checked=\"checked\"";
+            }
+            model.put("checkMale", checkMale);
+            model.put("checkFemale", checkFemale);
+            model.put("client", client);
+            model.put("stylists", Stylist.all());
+            model.put("template", "templates/ClientForm.vtl");
+            return new ModelAndView(model, layout);
+          }, new VelocityTemplateEngine());
+
+
+          //adding new client Details 
+          post("/clients/:id/edit", (request, response) -> {
+            Map<String, Object> model = new HashMap<String, Object>();
+            Client client = Client.find(Integer.parseInt(request.params(":id")));
+            String name = request.queryParams("name");
+            String gender = request.queryParams("gender");
+            String contact = request.queryParams("contact");
+            int stylist_id = Integer.parseInt(request.queryParams("stylist_id"));
+            client.update(name.toUpperCase(), gender, contact, stylist_id);
+            model.put("template", "templates/success.vtl");
+            return new ModelAndView(model, layout);
+            }, new VelocityTemplateEngine());
+
+            //removing CLIENTS (FOR ALL)
+            post("/clients/:id/delete", (request, response) -> {
+              Map<String, Object> model = new HashMap<String, Object>();
+              Client client = Client.find(Integer.parseInt(request.params(":id")));
+              client.delete();
+              response.redirect("/clients");
+              return new ModelAndView(model, layout);
+              }, new VelocityTemplateEngine());
+
+
+       get("/about",(request,response)->{
+           Map<String,Object> model = new HashMap <String, Object>;
+           model.put("template", "templates/about.vtl");
+           retuen new ModelAndView(model,layout);
+       }, new VelocityTemplateEngine());
     }
 }
 
